@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -68,7 +68,13 @@ export const moderateImage = (req, res) => {
 
   query(imageBuffer)
     .then((response) => {
-      res.status(200).json(response[0].label==="nsfw" ? { flagged: true, reason: "Inappropriate content in the image." } : { flagged: false });
+      res
+        .status(200)
+        .json(
+          response[0].label === "nsfw"
+            ? { flagged: true, reason: "Inappropriate content in the image." }
+            : { flagged: false }
+        );
     })
     .catch((error) => {
       console.error("Error processing the image:", error);
@@ -99,7 +105,10 @@ export const moderateVideo = async (req, res) => {
   }
 
   const uploadsDir = path.resolve("./uploads");
-  const videoPath = path.join(uploadsDir, `${Date.now()}-${req.file.originalname}`);
+  const videoPath = path.join(
+    uploadsDir,
+    `${Date.now()}-${req.file.originalname}`
+  );
 
   try {
     if (!fs.existsSync(uploadsDir)) {
@@ -110,7 +119,9 @@ export const moderateVideo = async (req, res) => {
 
     const frames = await extractFrames(videoPath);
 
-    const results = await Promise.all(frames.map((frame) => analyzeFrame(frame)));
+    const results = await Promise.all(
+      frames.map((frame) => analyzeFrame(frame))
+    );
 
     const flaggedFrames = results.filter((result) => result.flagged);
     const isFlagged = flaggedFrames.length / results.length > 0.2;
@@ -154,7 +165,9 @@ const extractFrames = (videoPath) => {
       .output(`${outputDir}%04d.png`)
       .fps(1)
       .on("end", () => {
-        const files = fs.readdirSync(outputDir).map((file) => `${outputDir}${file}`);
+        const files = fs
+          .readdirSync(outputDir)
+          .map((file) => `${outputDir}${file}`);
         resolve(files);
       })
       .on("error", (err) => reject(err))
@@ -182,50 +195,15 @@ const analyzeFrame = async (framePath) => {
 
 export const flagUser = async (req, res) => {
   try {
-    const { userId } = req.body; // Ensure userId is destructured correctly
-
-    if (!userId || typeof userId !== "string") {
-      return res.status(400).json({ message: "Invalid userId" });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId }, // 
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if(user.flags==2){
-      await prisma.log.create({
-        data: {
-          userId: userId,
-          activity: "banned due to multiple flags",
-        },
-      });
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: { banned: true },
-      });
-      return res.status(400).json({ message: "User banned due to multiple flags", user: updatedUser});
-    }
-    // Perform your logic here, e.g., increment a flag count
     await prisma.log.create({
       data: {
-        userId: userId,
-        activity: "flagged due to inappropriate content",
+        activity: "user flagged due to inappropriate content",
+        userId: "user xyz",
       },
     });
-
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { flags: { increment: 1 } },
-    });
-
-    return res.status(200).json({ message: "User flagged", user: updatedUser });
-  } catch (error) {
-    console.error("Error flagging user:", error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(200).json({ message: "User flagged successfully." });
+  } catch (err) {
+    return res.status(401).json({ error: "Failed to flag user." });
   }
 };
 
@@ -241,4 +219,3 @@ export const getLogs = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch logs." });
   }
 };
-

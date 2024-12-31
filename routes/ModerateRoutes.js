@@ -11,7 +11,7 @@ dotenv.config();
 router.post("/text",moderateText);
 router.post("/image",upload.single("image") ,moderateImage);
 router.post("/video", upload.single("video"), moderateVideo);
-router.put("/flag",flagUser);
+router.get("/flag",flagUser);
 router.get("/logs",getLogs)
 
 export default router;
