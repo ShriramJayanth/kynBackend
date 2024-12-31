@@ -17,6 +17,6 @@ app.use(cors({
 app.use("/auth", authRoutes);
 app.use("/moderate", ModerateRouter);
 
-app.listen(3001, () => {
-  console.log('Server is running on http://localhost:3001');
+app.listen(process.env.PORT, () => {
+  console.log('Server is running on port', process.env.PORT);
 })
