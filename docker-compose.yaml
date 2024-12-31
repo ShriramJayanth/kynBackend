@@ -7,8 +7,6 @@ services:
       - JWT_SECRET=your_jwt_secret_here
       - NODE_ENV=development
       - PORT=3003
-      - API_KEY=AIzaSyADJ1P9MWw0f3hiwSUB0HOx5t7mlTQWlH4
-      - HUGGINGFACE_TOKEN=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
     ports:
       - "3003:3003"
     depends_on:
