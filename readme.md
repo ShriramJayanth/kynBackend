@@ -135,16 +135,50 @@ This backend service provides routes to handle user activity logs and moderates 
    }
    ```
 
-#### Text Moderation
+#### Moderation
 
 1. **Moderate Text**
    ```
-   POST /moderate
+   POST /moderate/text
    ```
    Request Body:
    ```json
    {
      "text": "This is a test message."
+   }
+   ```
+   Response:
+   ```json
+   {
+     "flagged": true,
+     "reason": "no harm"
+   }
+   ```
+2. **Moderate image**
+   ```
+   POST /moderate/image
+   ```
+   Request Body:
+   ```json
+   {
+     "image": "img in binary"
+   }
+   ```
+   Response:
+   ```json
+   {
+     "flagged": true,
+     "reason": "no harm"
+   }
+   ```
+3. **Moderate video**
+   ```
+   POST /moderate/video
+   ```
+   Request Body:
+   ```json
+   {
+     "video": "video in binary"
    }
    ```
    Response:
