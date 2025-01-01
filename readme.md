@@ -1,9 +1,3 @@
-# Backend Service Documentation
-
-This document serves as a guide to understanding, using, and deploying the backend service for your application.
-
----
-
 ## Overview
 
 This backend service provides routes to handle user activity logs and moderates text. It is built with Node.js and utilizes PostgreSQL as the database. The service is designed for seamless integration with frontend applications.
